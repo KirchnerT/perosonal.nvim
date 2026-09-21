@@ -230,10 +230,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank() end,
 })
 
-vim.api.nvim_create_autocmd('VimEnter', {
-  callback = function() require('neo-tree.command').execute { action = 'show' } end,
-})
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -319,6 +315,37 @@ require('lazy').setup({
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
+  },
+
+  { -- Simple start screen when Neovim opens with no file
+    'goolord/alpha-nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      local alpha = require 'alpha'
+      local dashboard = require 'alpha.themes.dashboard'
+
+      dashboard.section.header.val = {
+        '                                                     ',
+        '  ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗ ',
+        '  ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║ ',
+        '  ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║ ',
+        '  ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║ ',
+        '  ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║ ',
+        '  ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝ ',
+        '                                                     ',
+      }
+
+      dashboard.section.buttons.val = {
+        dashboard.button('f', '  Find file', ':Telescope find_files<CR>'),
+        dashboard.button('r', '  Recent files', ':Telescope oldfiles<CR>'),
+        dashboard.button('n', '  New file', ':enew<CR>'),
+        dashboard.button('e', '  File explorer', ':Neotree show<CR>'),
+        dashboard.button('q', '  Quit', ':qa<CR>'),
+      }
+
+      alpha.setup(dashboard.opts)
+    end,
   },
 
   -- NOTE: Plugins can specify dependencies.
@@ -899,7 +926,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
